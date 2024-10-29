@@ -1,0 +1,446 @@
+<html><head><title>Astral OS</title>
+<style>
+  body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    background-color: #1a0033;
+    color: #e6ccff;
+    font-family: 'Inconsolata', monospace;
+    font-size: 14px;
+    overflow: hidden;
+  }
+  #terminal {
+    height: 100%;
+    overflow-y: auto;
+    padding: 10px;
+    box-sizing: border-box;
+    position: relative;
+  }
+  #input-line {
+    display: flex;
+    align-items: center;
+  }
+  #prompt {
+    color: #8855ff;
+    margin-right: 5px;
+  }
+  #input {
+    flex-grow: 1;
+    background: transparent;
+    border: none;
+    color: #e6ccff;
+    font-family: 'Inconsolata', monospace;
+    font-size: 14px;
+    outline: none;
+  }
+  .output {
+    margin-bottom: 10px;
+    white-space: pre-wrap;
+  }
+  .error {
+    color: #ff5555;
+  }
+  .success {
+    color: #50fa7b;
+  }
+  .magical-text {
+    text-shadow: 0 0 5px #8855ff;
+  }
+  @keyframes glow {
+    0% { text-shadow: 0 0 5px #8855ff; }
+    50% { text-shadow: 0 0 20px #8855ff, 0 0 30px #aa88ff; }
+    100% { text-shadow: 0 0 5px #8855ff; }
+  }
+  .glow {
+    animation: glow 2s infinite;
+  }
+  #sigil-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    opacity: 0.1;
+    z-index: 1;
+  }
+  @keyframes float {
+    0% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-20px) rotate(5deg); }
+    100% { transform: translateY(0px) rotate(0deg); }
+  }
+  .floating-symbol {
+    position: absolute;
+    font-size: 24px;
+    opacity: 0.3;
+    animation: float 10s infinite;
+    pointer-events: none;
+  }
+  #tarot-reader {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(26, 0, 51, 0.9);
+    border: 2px solid #8855ff;
+    border-radius: 10px;
+    padding: 20px;
+    z-index: 1000;
+    display: none;
+    max-width: 80%;
+    max-height: 80%;
+    overflow-y: auto;
+  }
+  #tarot-reader h2 {
+    color: #e6ccff;
+    text-align: center;
+    margin-top: 0;
+  }
+  #tarot-spread {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+  }
+  .tarot-card {
+    width: 100px;
+    height: 150px;
+    background-color: #2a0052;
+    border: 1px solid #8855ff;
+    border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+  }
+  .tarot-card:hover {
+    transform: translateY(-10px);
+  }
+  #tarot-interpretation {
+    text-align: center;
+  }
+  #close-tarot {
+    display: block;
+    margin: 20px auto 0;
+    padding: 5px 10px;
+    background-color: #8855ff;
+    color: #e6ccff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+</style>
+</head>
+<body>
+<div id="sigil-overlay">
+  <svg width="100%" height="100%">
+    <defs>
+      <pattern id="sigil-pattern" x="0" y="0" width="100" height="100" patternUnits="userSpaceOnUse">
+        <text x="0" y="50" fill="#8855ff" font-size="20">☽</text>
+        <text x="50" y="25" fill="#8855ff" font-size="20">⚡</text>
+        <text x="25" y="75" fill="#8855ff" font-size="20">☿</text>
+        <text x="75" y="50" fill="#8855ff" font-size="20">☼</text>
+      </pattern>
+    </defs>
+    <rect width="100%" height="100%" fill="url(#sigil-pattern)" />
+  </svg>
+</div>
+<div id="terminal">
+  <div class="output magical-text glow">Welcome to Astral terminal - Astral OS V6900</div>
+  <div class="output">The universe bends to your will. Type 'help' to see available commands.</div>
+  <div id="input-line">
+    <span id="prompt" class="glow">🔮 astral@terminal:~$</span>
+    <input type="text" id="input" autofocus>
+  </div>
+</div>
+
+<div id="tarot-reader">
+  <h2>Quantum Tarot Reader</h2>
+  <div id="tarot-spread"></div>
+  <div id="tarot-interpretation"></div>
+  <button id="close-tarot">Close</button>
+</div>
+
+<script>
+let filesystem = {
+  '/': {
+    'home': {
+      'chaos': {
+        'grimoire': {
+          'sigils.svg': 'A collection of powerful sigils',
+          'servitors.md': 'Notes on creating and managing servitors',
+          'reality_hacking.txt': 'Advanced techniques for bending reality'
+        },
+        'artifacts': {
+          'chaos_star.obj': '3D model of the eight-pointed chaos star',
+          'quantum_die.stl': 'Printable model of a probability-altering die'
+        },
+        '.bash_history': 'A log of all spells ever cast',
+        'neuromancer.epub': "Gibson's prophetic cyberpunk novel"
+      }
+    },
+    'etc': {
+      'qliphoth': 'Map of the shadow sephiroth',
+      'akashic_records': 'Access point to universal knowledge'
+    },
+    'var': {
+      'log': {
+        'synchronicity.log': 'Record of meaningful coincidences',
+        'quantum_fluctuations.dat': 'Raw data of reality glitches'
+      }
+    },
+    'usr': {
+      'bin': {
+        'sigilize': 'Tool for creating and charging sigils',
+        'invokeChaos': 'Summon raw chaotic energy',
+        'realityCheck': 'Determine current consensus reality',
+        'tarot': 'Launch the Quantum Tarot Reader app'
+      }
+    },
+    'tmp': {
+      'thoughtforms': 'Temporary storage for manifested ideas'
+    }
+  }
+};
+
+let currentDir = filesystem['/']['home']['chaos'];
+let currentPath = '/home/chaos';
+
+const terminal = document.getElementById('terminal');
+const input = document.getElementById('input');
+const prompt = document.getElementById('prompt');
+const tarotReader = document.getElementById('tarot-reader');
+const tarotSpread = document.getElementById('tarot-spread');
+const tarotInterpretation = document.getElementById('tarot-interpretation');
+const closeTarot = document.getElementById('close-tarot');
+
+input.addEventListener('keydown', function(event) {
+  if (event.key === 'Enter') {
+    const command = input.value;
+    executeCommand(command);
+    input.value = '';
+  }
+});
+
+async function executeCommand(command) {
+  addToTerminal(`<span class="glow">${prompt.textContent}</span> ${command}`);
+  
+  // Normalize the command to lowercase for easier comparison
+  const normalizedCommand = command.trim().toLowerCase();
+
+  // Lore and descriptions for each command
+  if (normalizedCommand === 'tarot') {
+    addToTerminal(`<span class="success">The Tarot Reader allows you to explore the mystical world of tarot cards. Each card drawn reveals insights into your past, present, and future. Open your mind and let the cards guide you!</span>`);
+    return;
+  }
+  
+  if (normalizedCommand === 'sigilize') {
+    addToTerminal(`<span class="success">The Sigil Forge is a powerful tool for creating and charging sigils. Sigils are symbols infused with magical intent, used to manifest desires and influence reality. Craft your sigil and watch your intentions take form!</span>`);
+    return;
+  }
+  
+  if (normalizedCommand === 'terminal') {
+    addToTerminal(`<span class="success">The Terminal is your command center for navigating the Astral OS. Here, you can execute commands, explore the filesystem, and interact with the universe at your fingertips. Type 'help' for a list of commands!</span>`);
+    return;
+  }
+  
+  if (normalizedCommand === 'astral projection') {
+    addToTerminal(`<span class="success">Astral Projection allows you to transcend the physical realm and explore the astral plane. Experience the freedom of your spirit as you journey through dimensions beyond the material world!</span>`);
+    return;
+  }
+  
+  if (normalizedCommand === 'alchemical lab') {
+    addToTerminal(`<span class="success">The Alchemical Lab is where science meets magic. Experiment with elements, create potions, and unlock the secrets of transformation. Discover the alchemical processes that can change reality!</span>`);
+    return;
+  }
+  
+  // Command to display available commands
+  if (normalizedCommand === 'help') {
+    addToTerminal(`<span class="success">Available commands: tarot, sigilize, terminal, astral projection, alchemical lab, secret, history, ca</span>`);
+    return;
+  }
+
+  if (normalizedCommand === 'ca') {
+    addToTerminal(`<span class="success">CA: </span>`);
+    return;
+  }
+  
+  // Funny command
+  if (normalizedCommand === 'secret') {
+    addToTerminal(`<span class="success">The true power of the universe lies in your intentions. Every thought you manifest shapes reality. Remember, the sigils you create are not just symbols; they are gateways to your desires. Harness this energy wisely! ✨🔮</span>`);
+    addFunnyDrawing();
+    return;
+  }
+  
+  // Command to check reality
+  if (normalizedCommand === 'realitycheck') {
+    addToTerminal(`<span class="success">Checking current consensus reality... Just kidding, it's all a simulation! 🤖</span>`);
+    return;
+  }
+
+  // Lore command
+  if (normalizedCommand === 'history') {
+    addToTerminal(`<span class="success">In the realm of the Astral universe, chaos and order dance in a delicate balance. The ancient practitioners of Chaos Magick harness the power of sigils, tarot, and alchemy to shape their destinies. Legends speak of the Quantum Tarot Reader, a mystical tool that reveals hidden truths, and the Sigil Forge, where desires are etched into reality. As you navigate this world, remember: your will is the key to unlocking the universe's secrets!</span>`);
+    return;
+  }
+
+  // If the command is not recognized
+  addToTerminal(`<span class="error">Command not recognized. Type 'help' for a list of available commands.</span>`);
+  
+  try {
+    const response = await fetch('/api/llm', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        command: command,
+        currentPath: currentPath,
+        filesystem: filesystem
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const result = await response.json();
+    
+    if (result.code) {
+      // Execute the returned JavaScript code
+      eval(result.code);
+    }
+    
+    if (result.output) {
+      addToTerminal(result.output);
+    }
+    
+    if (result.newPath) {
+      currentPath = result.newPath;
+      currentDir = getDirectoryFromPath(currentPath);
+      prompt.textContent = `🔮 chaos@unixmagick:${currentPath}$`;
+    }
+    
+    // Add a magical effect after each command
+    addMagicalEffect();
+    
+  } catch (error) {
+    addToTerminal(`<span class="error">Error in the fabric of reality: ${error.message}</span>`);
+  }
+}
+
+function addFunnyDrawing() {
+  const drawing = `
+    <pre>
+      ( ͡° ͜ʖ ͡°)
+      <span style="color: #50fa7b;">✨</span>
+      ( ͡° ͜ʖ ͡°)
+    </pre>
+  `;
+  addToTerminal(drawing);
+}
+
+function getDirectoryFromPath(path) {
+  return path.split('/').reduce((acc, curr) => {
+    if (curr === '') return acc;
+    return acc && acc[curr];
+  }, filesystem['/']);
+}
+
+function addToTerminal(text) {
+  const output = document.createElement('div');
+  output.className = 'output';
+  output.innerHTML = text;
+  terminal.insertBefore(output, input.parentNode);
+  terminal.scrollTop = terminal.scrollHeight;
+}
+
+function updateFilesystem(newFilesystem) {
+  filesystem = newFilesystem;
+}
+
+function addMagicalEffect() {
+  const symbols = ['☽', '☼', '☿', '♀', '♂', '♃', '♄', '⚡', '✧', '☥', '⚔'];
+  const symbol = symbols[Math.floor(Math.random() * symbols.length)];
+  const floatingSymbol = document.createElement('div');
+  floatingSymbol.className = 'floating-symbol';
+  floatingSymbol.textContent = symbol;
+  floatingSymbol.style.left = `${Math.random() * 100}%`;
+  floatingSymbol.style.top = `${Math.random() * 100}%`;
+  floatingSymbol.style.animationDuration = `${5 + Math.random() * 10}s`;
+  terminal.appendChild(floatingSymbol);
+  
+  // Remove the symbol after animation
+  setTimeout(() => {
+    terminal.removeChild(floatingSymbol);
+  }, 15000);
+}
+
+function launchTarotReader() {
+  tarotReader.style.display = 'block';
+  tarotSpread.innerHTML = '';
+  tarotInterpretation.textContent = '';
+  
+  const cards = ['🃏', '🔮', '🌙', '☀️', '⚡'];
+  for (let i = 0; i < 3; i++) {
+    const card = document.createElement('div');
+    card.className = 'tarot-card';
+    card.textContent = '🎴';
+    card.addEventListener('click', () => revealCard(card, cards[Math.floor(Math.random() * cards.length)]));
+    tarotSpread.appendChild(card);
+  }
+}
+
+function revealCard(cardElement, symbol) {
+  cardElement.textContent = symbol;
+  cardElement.style.pointerEvents = 'none';
+  
+  if (Array.from(tarotSpread.children).every(card => card.textContent !== '🎴')) {
+    interpretSpread();
+  }
+}
+
+async function interpretSpread() {
+  const spread = Array.from(tarotSpread.children).map(card => card.textContent).join(' ');
+  
+  try {
+    const response = await fetch('/api/llm', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        command: `Interpret this tarot spread: ${spread}`,
+        currentPath: currentPath,
+        filesystem: filesystem
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const result = await response.json();
+    
+    if (result.output) {
+      tarotInterpretation.innerHTML = `<p class="magical-text">${result.output}</p>`;
+    }
+    
+  } catch (error) {
+    tarotInterpretation.textContent = `Error in divination: ${error.message}`;
+  }
+}
+
+closeTarot.addEventListener('click', () => {
+  tarotReader.style.display = 'none';
+});
+
+// Initial magical effects
+for (let i = 0; i < 5; i++) {
+  addMagicalEffect();
+}
+</script>
+</body>
+</html>

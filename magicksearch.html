@@ -1,0 +1,135 @@
+<html><head>
+<title>AstralSearch - The Occult Search Engine</title>
+<style>
+    body, html {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        font-family: 'Inconsolata', monospace;
+        background: #1a1a1a;
+        color: #e0e0e0;
+        font-size: 14px;
+    }
+    .container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 10px; /* Reduced padding */
+    }
+    .search-container {
+        text-align: center;
+        margin-top: 20px; /* Significantly reduced top margin */
+    }
+    .logo {
+        font-size: 36px; /* Slightly reduced logo size */
+        margin-bottom: 12px; /* Reduced margin */
+    }
+    .search-box {
+        width: 70%; /* Slightly reduced width */
+        padding: 6px; /* Reduced padding */
+        font-size: 14px;
+        background: #2a2a2a;
+        border: 1px solid #4a4a4a;
+        color: #e0e0e0;
+    }
+    .search-button {
+        padding: 6px 12px; /* Reduced padding */
+        font-size: 14px;
+        background: #4a4a4a;
+        border: none;
+        color: #e0e0e0;
+        cursor: pointer;
+    }
+    .search-button:hover {
+        background: #5a5a5a;
+    }
+    .results {
+        margin-top: 20px; /* Reduced margin */
+    }
+    .result {
+        margin-bottom: 12px; /* Reduced margin */
+    }
+    .result-title {
+        font-size: 16px;
+        color: #9370DB;
+    }
+    .result-url {
+        color: #4CAF50;
+        font-size: 11px;
+    }
+    .result-description {
+        margin-top: 3px;
+        font-size: 12px;
+    }
+    .spellcheck {
+        font-style: italic;
+        margin-top: 6px;
+        font-size: 12px;
+    }
+</style>
+</head>
+<body>
+<div class="container">
+    <div class="search-container">
+        <div class="logo">🔮 MagickSearch</div>
+        <form action="https://websim.ai/c/unix-magic/tabs=websim.ai/magicksearch" method="GET">
+            <input type="text" name="q" class="search-box" placeholder="Search the occult web..." value="">
+            <input type="submit" class="search-button" value="Divine">
+        </form>
+    </div>
+    
+    <div class="results">
+        <div class="spellcheck">
+            Did you mean: <a href="?q=chaos+magick">chaos magick</a>?
+        </div>
+        
+        <div class="result">
+            <a href="https://websim.ai/c/unix-magic/tabs=websim.ai/chaosmagickcentral" class="result-title">Chaos Magick Central - Your Portal to Reality Hacking</a>
+            <div class="result-url">https://websim.ai/c/unix-magic/tabs=websim.ai/chaosmagickcentral</div>
+            <div class="result-description">
+                Explore the principles and practices of Chaos Magick. Learn sigil creation, reality manipulation, and consciousness hacking techniques.
+            </div>
+        </div>
+        
+        <div class="result">
+            <a href="https://websim.ai/c/unix-magic/tabs=websim.ai/sigil-generator" class="result-title">Online Sigil Generator - Manifest Your Desires</a>
+            <div class="result-url">https://websim.ai/c/unix-magic/tabs=websim.ai/sigil-generator</div>
+            <div class="result-description">
+                Create powerful sigils with our quantum-enhanced sigil generator. Input your intent and receive a unique, energetically charged sigil.
+            </div>
+        </div>
+        
+        <div class="result">
+            <a href="https://websim.ai/c/unix-magic/tabs=websim.ai/magick-unix" class="result-title">Magick Unix - Where Technology Meets the Occult</a>
+            <div class="result-url">https://websim.ai/c/unix-magic/tabs=websim.ai/magick-unix</div>
+            <div class="result-description">
+                Discover how to integrate magical practices with Unix systems. Learn about sigil shell scripts, tarot-based encryption, and more.
+            </div>
+        </div>
+        
+        <div class="result">
+            <a href="https://websim.ai/c/unix-magic/tabs=websim.ai/astral-net" class="result-title">AstralNet - The Psychic Internet</a>
+            <div class="result-url">https://websim.ai/c/unix-magic/tabs=websim.ai/astral-net</div>
+            <div class="result-description">
+                Connect to the Astral Plane digitally. Browse the Akashic Records, chat with spirit guides, and download cosmic wisdom directly to your mind.
+            </div>
+        </div>
+        
+        <div class="result">
+            <a href="https://websim.ai/c/unix-magic/tabs=websim.ai/quantum-grimoire" class="result-title">The Quantum Grimoire - Spells for the Digital Age</a>
+            <div class="result-url">https://websim.ai/c/unix-magic/tabs=websim.ai/quantum-grimoire</div>
+            <div class="result-description">
+                A comprehensive collection of modern magical practices. Includes quantum spell casting, digital alchemy, and cybermantic rituals.
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.querySelector('form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    let query = document.querySelector('.search-box').value;
+    window.location.href = `https://websim.ai/c/unix-magic/tabs=websim.ai/magicksearch?q=${encodeURIComponent(query)}`;
+});
+</script>
+
+</body></html>

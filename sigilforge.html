@@ -1,0 +1,231 @@
+<html><head><title>Advanced Purple Sigil Forge - Atral OS</title>
+<style>
+  body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    font-family: 'Inconsolata', monospace;
+    font-size: 12px;
+    background-color: #1a0033;
+    color: #cc33ff;
+  }
+  #os-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+  }
+  #top-bar {
+    background-color: #330066;
+    padding: 5px 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  #app-container {
+    flex-grow: 1;
+    display: flex;
+    padding: 10px;
+  }
+  #sigil-generator {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    margin-right: 10px;
+  }
+  #sigil-display {
+    flex: 1;
+    border: 1px solid #cc33ff;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: radial-gradient(circle, #330066, #1a0033);
+  }
+  #sigil-canvas {
+    max-width: 100%;
+    max-height: 100%;
+  }
+  #control-panel {
+    background-color: #220044;
+    padding: 10px;
+    border: 1px solid #cc33ff;
+  }
+  #history-panel {
+    flex: 1;
+    background-color: #220044;
+    border: 1px solid #cc33ff;
+    padding: 10px;
+    overflow-y: auto;
+  }
+  input, button, select {
+    background-color: #330066;
+    color: #cc33ff;
+    border: 1px solid #cc33ff;
+    margin: 5px 0;
+    padding: 5px;
+    width: 100%;
+    font-family: 'Inconsolata', monospace;
+    font-size: 12px;
+  }
+  button:hover {
+    background-color: #4d0099;
+    cursor: pointer;
+  }
+  h2, h3 {
+    margin-top: 0;
+    color: #ff66ff;
+  }
+</style>
+</head>
+<body>
+<div id="os-container">
+  <div id="top-bar">
+    <span>Astral OS</span>
+    <span>Advanced Purple Sigil Forge v69.00</span>
+    <span id="clock"></span>
+  </div>
+  <div id="app-container">
+    <div id="sigil-generator">
+      <div id="sigil-display">
+        <canvas id="sigil-canvas"></canvas>
+      </div>
+      <div id="control-panel">
+        <h3>Sigil Forge Controls</h3>
+        <input type="text" id="intention-input" placeholder="Enter your magical intention">
+        <select id="sigil-style">
+          <option value="linear">Linear</option>
+          <option value="circular">Circular</option>
+          <option value="spiral">Spiral</option>
+        </select>
+        <select id="glyph-set">
+          <option value="runes">Elder Futhark Runes</option>
+          <option value="alchemical">Alchemical Symbols</option>
+          <option value="celestial">Celestial Symbols</option>
+        </select>
+        <button id="generate-sigil">Forge Sigil</button>
+        <button id="save-sigil">Save Sigil to Grimoire</button>
+      </div>
+    </div>
+    <div id="history-panel">
+      <h3>Sigil Grimoire</h3>
+      <div id="sigil-history"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const canvas = document.getElementById('sigil-canvas');
+  const ctx = canvas.getContext('2d');
+  const intentionInput = document.getElementById('intention-input');
+  const sigilStyleSelect = document.getElementById('sigil-style');
+  const glyphSetSelect = document.getElementById('glyph-set');
+  const generateButton = document.getElementById('generate-sigil');
+  const saveButton = document.getElementById('save-sigil');
+  const sigilHistory = document.getElementById('sigil-history');
+  const clock = document.getElementById('clock');
+
+  // Glyph sets
+  const glyphSets = {
+    runes: ['ᚠ', 'ᚢ', 'ᚦ', 'ᚨ', 'ᚱ', 'ᚲ', 'ᚷ', 'ᚹ', 'ᚺ', 'ᚾ', 'ᛁ', 'ᛃ', 'ᛈ', 'ᛇ', 'ᛉ', 'ᛊ', 'ᛏ', 'ᛒ', 'ᛖ', 'ᛗ', 'ᛚ', 'ᛜ', 'ᛞ', 'ᛟ'],
+    alchemical: ['🜀', '🜁', '🜂', '🜃', '🜄', '🜅', '🜆', '🜇', '🜈', '🜉', '🜊', '🜋', '🜌', '🜍', '🜎', '🜏'],
+    celestial: ['☉', '☽', '☿', '♀', '♂', '♃', '♄', '♅', '♆', '♇', '⚳', '⚴', '⚵', '⚶', '⚷']
+  };
+
+  function updateClock() {
+    const now = new Date();
+    clock.textContent = now.toLocaleTimeString();
+  }
+  setInterval(updateClock, 1000);
+  updateClock();
+
+  function resizeCanvas() {
+    canvas.width = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+  }
+  resizeCanvas();
+  window.addEventListener('resize', resizeCanvas);
+
+  function generateSigil() {
+    const intention = intentionInput.value.toLowerCase();
+    const style = sigilStyleSelect.value;
+    const glyphSet = glyphSets[glyphSetSelect.value];
+    
+    // Remove vowels and duplicates
+    const chars = [...new Set(intention.replace(/[aeiou\s]/g, ''))];
+    
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.strokeStyle = '#cc33ff';
+    ctx.fillStyle = '#cc33ff';
+    ctx.lineWidth = 2;
+    
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+    const radius = Math.min(canvas.width, canvas.height) / 3;
+
+    ctx.beginPath();
+    chars.forEach((char, index) => {
+      const t = index / chars.length;
+      let x, y;
+      
+      switch(style) {
+        case 'circular':
+          x = centerX + Math.cos(t * Math.PI * 2) * radius;
+          y = centerY + Math.sin(t * Math.PI * 2) * radius;
+          break;
+        case 'spiral':
+          const spiralRadius = radius * t;
+          x = centerX + Math.cos(t * Math.PI * 6) * spiralRadius;
+          y = centerY + Math.sin(t * Math.PI * 6) * spiralRadius;
+          break;
+        default: // linear
+          x = canvas.width * t;
+          y = centerY + (Math.random() - 0.5) * radius;
+      }
+      
+      if (index === 0) {
+        ctx.moveTo(x, y);
+      } else {
+        ctx.lineTo(x, y);
+      }
+
+      // Add glyph
+      const glyphIndex = char.charCodeAt(0) % glyphSet.length;
+      ctx.font = '20px Inconsolata';
+      ctx.fillText(glyphSet[glyphIndex], x - 10, y + 10);
+    });
+    
+    ctx.closePath();
+    ctx.stroke();
+
+    // Add a pulsing glow effect
+    let glowIntensity = 0;
+    let increasing = true;
+    setInterval(() => {
+      ctx.shadowBlur = 0;
+      ctx.shadowColor = '#cc33ff';
+      ctx.stroke();
+      
+      if (increasing) {
+        glowIntensity += 0.5;
+        if (glowIntensity >= 20) increasing = false;
+      } else {
+        glowIntensity -= 0.5;
+        if (glowIntensity <= 0) increasing = true;
+      }
+    }, 50);
+  }
+
+  function saveSigil() {
+    const intention = intentionInput.value;
+    const entry = document.createElement('p');
+    entry.textContent = `"${intention}" - ${new Date().toLocaleTimeString()}`;
+    sigilHistory.insertBefore(entry, sigilHistory.firstChild);
+  }
+
+  generateButton.addEventListener('click', generateSigil);
+  saveButton.addEventListener('click', saveSigil);
+</script>
+</body>
+</html>

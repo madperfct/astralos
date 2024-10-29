@@ -1,0 +1,260 @@
+<html><head><title>Alchemical Lab - Astral OS</title>
+  <style>
+    body {
+      background-color: #1a0033;
+      color: #d6b6ff;
+      font-family: 'Inconsolata', monospace;
+      font-size: 12px;
+      margin: 0;
+      padding: 10px;
+      height: 100vh;
+      overflow: auto;
+    }
+    .window {
+      border: 1px solid #8a2be2;
+      border-radius: 3px;
+      padding: 5px;
+      margin-bottom: 10px;
+      background-color: #2b0047;
+    }
+    .title-bar {
+      background-color: #4b0082;
+      color: #fff;
+      padding: 3px;
+      margin: -5px -5px 5px -5px;
+      border-top-left-radius: 3px;
+      border-top-right-radius: 3px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 10px;
+    }
+    .close-button {
+      background-color: #ff69b4;
+      border: none;
+      color: #fff;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      font-size: 8px;
+      line-height: 12px;
+      text-align: center;
+      cursor: pointer;
+    }
+    h1 {
+      color: #da70d6;
+      font-size: 14px;
+      margin-top: 5px;
+      margin-bottom: 5px;
+    }
+    h2 {
+      color: #da70d6;
+      font-size: 12px;
+      margin-top: 5px;
+      margin-bottom: 5px;
+    }
+    .command-line {
+      background-color: #000;
+      color: #00ff00;
+      padding: 5px;
+      border-radius: 3px;
+      font-family: 'Courier New', monospace;
+      font-size: 10px;
+      white-space: nowrap;
+      overflow-x: auto;
+    }
+    .command-line::before {
+      content: "$ ";
+      color: #ff00ff;
+    }
+    .ingredient {
+      display: inline-block;
+      background-color: #4b0082;
+      color: #fff;
+      padding: 2px 5px;
+      margin: 2px;
+      border-radius: 10px;
+      font-size: 10px;
+    }
+    .cauldron {
+      width: 50px;
+      height: 50px;
+      background-color: #36013f;
+      border-radius: 50% 50% 0 0;
+      margin: 10px auto;
+      position: relative;
+      overflow: hidden;
+    }
+    .cauldron::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 60%;
+      background-color: #8a2be2;
+      border-radius: 50%;
+      animation: bubble 2s infinite alternate;
+    }
+    @keyframes bubble {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(-5px); }
+    }
+    .sparkle {
+      position: absolute;
+      width: 3px;
+      height: 3px;
+      background-color: #fff;
+      border-radius: 50%;
+      opacity: 0;
+      animation: sparkle 1s infinite;
+    }
+    @keyframes sparkle {
+      0% { transform: scale(0); opacity: 0; }
+      50% { transform: scale(1); opacity: 1; }
+      100% { transform: scale(0); opacity: 0; }
+    }
+    ul {
+      padding-left: 15px;
+      margin: 5px 0;
+    }
+    li {
+      margin-bottom: 3px;
+    }
+    button {
+      background-color: #800080; /* Purple color */
+      color: #fff;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 3px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+  </style>
+  </head>
+  <body>
+    <div class="window">
+      <div class="title-bar">
+        <span>Alchemical Laboratory</span>
+        <button class="close-button">x</button>
+      </div>
+      <h1>Welcome to the Alchemical Lab</h1>
+      <p>Here, the ancient art of alchemy meets the power of Astral. Transmute elements, cast spells, and unlock the secrets of the digital universe.</p>
+      
+      <h2>Current Experiment:</h2>
+      <div class="command-line">
+        <button onclick="performExperiment()">Start Experiment</button>
+      </div>
+      
+      <h2>Ingredients</h2>
+      <div>
+        <label><input type="checkbox" value="Binary Sulfur"> Binary Sulfur</label>
+        <label><input type="checkbox" value="Quantum Mercury"> Quantum Mercury</label>
+        <label><input type="checkbox" value="Kernel Salt"> Kernel Salt</label>
+        <label><input type="checkbox" value="Root Access Extract"> Root Access Extract</label>
+        <label><input type="checkbox" value="Philosopher's Stone"> Philosopher's Stone</label>
+        <label><input type="checkbox" value="Elixir of Life"> Elixir of Life</label>
+        <label><input type="checkbox" value="Dragon's Blood"> Dragon's Blood</label>
+      </div>
+      
+      <h2>Alchemical Cauldron</h2>
+      <div class="cauldron">
+        <div class="sparkle" style="top: 20%; left: 30%;"></div>
+        <div class="sparkle" style="top: 40%; left: 70%;"></div>
+        <div class="sparkle" style="top: 60%; left: 50%;"></div>
+      </div>
+      
+      <div id="experiment-result" style="color: #00ff00; margin-top: 10px;"></div>
+    </div>
+  
+    <div class="window">
+      <div class="title-bar">
+        <span>Spell Browser</span>
+        <button class="close-button">x</button>
+      </div>
+      <h2>Available Spells</h2>
+      <ul>
+        <li>Summon Daemon</li>
+        <li>Encrypt Scroll</li>
+        <li>Compile Grimoire</li>
+        <li>Network Scrying</li>
+        <li>Transmute Elements</li>
+        <li>Reveal Secrets</li>
+        <li>Conjure Familiar</li>
+        <li>Enhance Potion</li>
+      </ul>
+    </div>
+  
+    <script>
+      // Add some magical interactivity
+      document.querySelectorAll('.close-button').forEach(button => {
+        button.addEventListener('click', () => {
+          button.closest('.window').style.display = 'none';
+        });
+      });
+  
+      // Create more sparkles
+      setInterval(() => {
+        const sparkle = document.createElement('div');
+        sparkle.classList.add('sparkle');
+        sparkle.style.top = Math.random() * 100 + '%';
+        sparkle.style.left = Math.random() * 100 + '%';
+        document.querySelector('.cauldron').appendChild(sparkle);
+        setTimeout(() => sparkle.remove(), 1000);
+      }, 300);
+  
+      // Function to perform the experiment
+      function performExperiment() {
+      const selectedIngredients = Array.from(document.querySelectorAll('input[type="checkbox"]:checked')).map(checkbox => checkbox.value);
+      const resultDiv = document.getElementById('experiment-result');
+
+      if (selectedIngredients.length === 0) {
+        resultDiv.textContent = "Please select at least one ingredient.";
+        return;
+      }
+
+      resultDiv.textContent = "Casting spell... Please wait.";
+      
+      setTimeout(() => {
+        const spell = castSpell(selectedIngredients);
+        resultDiv.textContent = `Success! You have cast: ${spell}!`;
+        performSpellAction(spell); // Call the function to perform the spell action
+      }, 3000); // Simulate a 3-second process
+    }
+  
+      // Function to determine the spell based on selected ingredients
+      function castSpell(ingredients) {
+        // Define combinations of ingredients that correspond to spells
+        const spellCombinations = {
+          "Binary Sulfur, Quantum Mercury": "Summon Daemon",
+          "Kernel Salt, Root Access Extract": "Encrypt Scroll",
+          "Philosopher's Stone, Dragon's Blood": "Compile Grimoire",
+          "Quantum Mercury, Elixir of Life": "Network Scrying",
+          "Binary Sulfur, Kernel Salt": "Transmute Elements",
+          "Root Access Extract, Elixir of Life": "Reveal Secrets",
+          "Quantum Mercury, Dragon's Blood": "Conjure Familiar",
+          "Philosopher's Stone, Kernel Salt": "Enhance Potion"
+        };
+  
+        // Create a key from selected ingredients
+        const key = ingredients.sort().join(", ");
+        return spellCombinations[key] || "Unknown Spell"; // Return the spell or unknown
+      }
+  
+      // Function to perform an action based on the spell cast
+      function performSpellAction(spell) {
+        const actionMessages = {
+          "Summon Daemon": "A mysterious figure appears before you!",
+          "Encrypt Scroll": "The scroll is now protected by powerful magic.",
+          "Compile Grimoire": "Your knowledge has been expanded with new spells.",
+          "Network Scrying": "You can now see into the digital realm.",
+          "Transmute Elements": "Elements around you shift and change form.",
+          "Reveal Secrets": "Hidden truths are now visible to you.",
+          "Conjure Familiar": "A loyal familiar has joined your side.",
+          "Enhance Potion": "Your potion glows with enhanced power!"
+        };
+  
+        alert(actionMessages[spell] || "The spell fizzles out with no effect."); // Display the action message
+      }
+    </script>
+  </body></html>

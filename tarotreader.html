@@ -1,0 +1,747 @@
+<html><head><title>TarotReader - Mystic Tech 6900 Edition</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+
+  body, html {
+    background-color: #0a0a0a;
+    color: #00ff00;
+    font-family: 'VT323', monospace;
+    font-size: 16px;
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    overflow: hidden;
+  }
+  .window {
+    background-color: #1a1a1a;
+    border: 2px solid #00ff00;
+    border-radius: 0;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+  }
+  .title-bar {
+    background-color: #4a0058;
+    color: #00ff00;
+    padding: 5px 10px;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-transform: uppercase;
+  }
+  .content {
+    display: flex;
+    flex-grow: 1;
+    padding: 10px;
+    overflow: hidden;
+  }
+  .sidebar {
+    width: 180px;
+    background-color: #320040;
+    padding: 10px;
+    margin-right: 10px;
+    display: flex;
+    flex-direction: column;
+  }
+  .main-area {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .card-display {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 20px;
+    overflow-y: auto;
+    max-height: 60%;
+    padding: 15px;
+    background-color: #1a1a1a;
+    border: 1px solid #00ff00;
+  }
+  .card {
+    width: 100px;
+    height: 160px;
+    background-color: #320040;
+    border: 2px solid #00ff00;
+    border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 12px;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.3s, box-shadow 0.3s;
+    box-shadow: 0 0 5px #00ff00;
+  }
+  .card:hover {
+    transform: translateY(-5px) rotate(3deg);
+    box-shadow: 0 0 15px #00ff00;
+  }
+  .interpretation {
+    background-color: #1a1a1a;
+    padding: 15px;
+    flex-grow: 1;
+    overflow-y: auto;
+    margin-top: 15px;
+    border: 1px solid #00ff00;
+  }
+  button, select {
+    background-color: #320040;
+    color: #00ff00;
+    border: 1px solid #00ff00;
+    padding: 5px 10px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    margin-bottom: 10px;
+    font-family: 'VT323', monospace;
+    font-size: 14px;
+    text-transform: uppercase;
+  }
+  button:hover, select:hover {
+    background-color: #4a0058;
+    transform: scale(1.05);
+  }
+  .status-bar {
+    background-color: #4a0058;
+    color: #00ff00;
+    padding: 5px 10px;
+    font-size: 14px;
+    display: flex;
+    justify-content: space-between;
+    border-top: 1px solid #00ff00;
+  }
+  @keyframes pulse {
+    0% { box-shadow: 0 0 5px #00ff00; }
+    50% { box-shadow: 0 0 20px #00ff00, 0 0 30px #ff00ff; }
+    100% { box-shadow: 0 0 5px #00ff00; }
+  }
+  .magical-effect {
+    animation: pulse 2s infinite;
+  }
+  .loading {
+    color: #ff00ff;
+    text-align: center;
+    padding: 20px;
+  }
+</style>
+</head>
+<body>
+  <div class="window">
+    <div class="title-bar">
+      <span>TarotReader V6900 - Mystic Tech Edition</span>
+    </div>
+    <div class="content">
+      <div class="sidebar">
+        <button id="shuffleDeck">⟲ Shuffle</button>
+        <select id="spreadType">
+          <option value="1">1 Card Spread</option>
+          <option value="3">3 Card Spread</option>
+          <option value="celtic">Celtic Cross</option>
+        </select>
+        <button id="drawCards">◊ Draw Cards</button>
+        <button id="interpretSpread">⚜ Interpret Spread</button>
+        <button id="clearReading">⌧ Clear</button>
+        <button id="saveReading">◭ Save</button>
+        <button id="loadReading">◮ Load</button>
+      </div>
+      <div class="main-area">
+        <div class="card-display" id="cardDisplay"></div>
+        <div class="interpretation" id="interpretation"></div>
+      </div>
+    </div>
+    <div class="status-bar">
+      <span>SYS: MysticOS V6.9.0.0 | CPU: 33% | RAM: 4096 MB / 32768 MB | MANA: 99%</span>
+      <span id="deckStatus">CARDS: 78</span>
+    </div>
+  </div>
+
+  <script>
+    const tarotDeck = [
+      "The Fool", "The Magician", "The High Priestess", "The Empress", "The Emperor",
+      "The Hierophant", "The Lovers", "The Chariot", "Strength", "The Hermit",
+      "Wheel of Fortune", "Justice", "The Hanged Man", "Death", "Temperance",
+      "The Devil", "The Tower", "The Star", "The Moon", "The Sun",
+      "Judgement", "The World",
+      // Minor Arcana - Wands
+      "Ace of Wands", "Two of Wands", "Three of Wands", "Four of Wands", "Five of Wands",
+      "Six of Wands", "Seven of Wands", "Eight of Wands", "Nine of Wands", "Ten of Wands",
+      "Page of Wands", "Knight of Wands", "Queen of Wands", "King of Wands",
+      // Minor Arcana - Cups
+      "Ace of Cups", "Two of Cups", "Three of Cups", "Four of Cups", "Five of Cups",
+      "Six of Cups", "Seven of Cups", "Eight of Cups", "Nine of Cups", "Ten of Cups",
+      "Page of Cups", "Knight of Cups", "Queen of Cups", "King of Cups",
+      // Minor Arcana - Swords
+      "Ace of Swords", "Two of Swords", "Three of Swords", "Four of Swords", "Five of Swords",
+      "Six of Swords", "Seven of Swords", "Eight of Swords", "Nine of Swords", "Ten of Swords",
+      "Page of Swords", "Knight of Swords", "Queen of Swords", "King of Swords",
+      // Minor Arcana - Pentacles
+      "Ace of Pentacles", "Two of Pentacles", "Three of Pentacles", "Four of Pentacles", "Five of Pentacles",
+      "Six of Pentacles", "Seven of Pentacles", "Eight of Pentacles", "Nine of Pentacles", "Ten of Pentacles",
+      "Page of Pentacles", "Knight of Pentacles", "Queen of Pentacles", "King of Pentacles"
+    ];
+
+    let currentDeck = [...tarotDeck];
+    let drawnCards = [];
+
+    const cardDisplay = document.getElementById('cardDisplay');
+    const interpretation = document.getElementById('interpretation');
+    const deckStatus = document.getElementById('deckStatus');
+    const spreadType = document.getElementById('spreadType');
+
+    document.getElementById('shuffleDeck').addEventListener('click', shuffleDeck);
+    document.getElementById('drawCards').addEventListener('click', drawCards);
+    document.getElementById('interpretSpread').addEventListener('click', interpretFullSpread);
+    document.getElementById('clearReading').addEventListener('click', clearReading);
+    document.getElementById('saveReading').addEventListener('click', saveReading);
+    document.getElementById('loadReading').addEventListener('click', loadReading);
+
+    function shuffleDeck() {
+      currentDeck = [...tarotDeck];
+      for (let i = currentDeck.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [currentDeck[i], currentDeck[j]] = [currentDeck[j], currentDeck[i]];
+      }
+      updateDeckStatus();
+      interpretation.innerHTML = "<p>The deck has been shuffled with mystic energy.</p>";
+    }
+
+    function drawCards() {
+      clearReading();
+      const spread = spreadType.value;
+      const numCards = spread === 'celtic' ? 10 : parseInt(spread);
+      
+      if (currentDeck.length < numCards) {
+        interpretation.innerHTML = "<p>Not enough cards in the deck. Please shuffle.</p>";
+        return;
+      }
+
+      for (let i = 0; i < numCards; i++) {
+        const card = currentDeck.pop();
+        drawnCards.push(card);
+        displayCard(card, i);
+      }
+
+      updateDeckStatus();
+    }
+
+    function displayCard(card, position) {
+      const cardElement = document.createElement('div');
+      cardElement.className = 'card magical-effect';
+      cardElement.textContent = card;
+      cardElement.addEventListener('click', () => showCardMeaning(card));
+      cardDisplay.appendChild(cardElement);
+    }
+
+    const cardMeanings = {
+        "The Fool": {
+            meaningUpright: "New beginnings, optimism, trust in life.",
+            meaningReversed: "Naivety, foolishness, recklessness.",
+            description: "The Fool represents a fresh start and the potential for new adventures."
+        },
+        "The Magician": {
+            meaningUpright: "Manifestation, resourcefulness, power.",
+            meaningReversed: "Manipulation, poor planning, untapped talents.",
+            description: "The Magician signifies the ability to harness one's skills to achieve goals."
+        },
+        "The High Priestess": {
+            meaningUpright: "Intuition, unconscious knowledge, mystery.",
+            meaningReversed: "Secrets, disconnected from intuition, withdrawal.",
+            description: "The High Priestess represents the power of intuition and the subconscious mind."
+        },
+        "The Empress": {
+            meaningUpright: "Fertility, femininity, beauty, nature.",
+            meaningReversed: "Creative block, dependence on others, neglect.",
+            description: "The Empress embodies nurturing and abundance."
+        },
+        "The Emperor": {
+            meaningUpright: "Authority, structure, control, fatherhood.",
+            meaningReversed: "Domination, excessive control, rigidity.",
+            description: "The Emperor represents stability and protection."
+        },
+        "The Hierophant": {
+            meaningUpright: "Tradition, conformity, morality, spiritual guidance.",
+            meaningReversed: "Rebellion, unconventionality, new approaches.",
+            description: "The Hierophant signifies the importance of spiritual wisdom."
+        },
+        "The Lovers": {
+            meaningUpright: "Love, harmony, relationships, values alignment.",
+            meaningReversed: "Disharmony, imbalance, miscommunication.",
+            description: "The Lovers card represents meaningful relationships and choices."
+        },
+        "The Chariot": {
+            meaningUpright: "Control, willpower, victory, assertion.",
+            meaningReversed: "Lack of control, aggression, obstacles.",
+            description: "The Chariot signifies determination and triumph over challenges."
+        },
+        "Strength": {
+            meaningUpright: "Courage, bravery, compassion, inner strength.",
+            meaningReversed: "Self-doubt, weakness, insecurity.",
+            description: "Strength represents the power of love and patience."
+        },
+        "The Hermit": {
+            meaningUpright: "Soul-searching, introspection, inner guidance.",
+            meaningReversed: "Isolation, loneliness, withdrawal.",
+            description: "The Hermit signifies the search for truth and enlightenment."
+        },
+        "Wheel of Fortune": {
+            meaningUpright: "Change, cycles, inevitable fate, luck.",
+            meaningReversed: "Bad luck, resistance to change, breaking cycles.",
+            description: "The Wheel of Fortune represents the ups and downs of life."
+        },
+        "Justice": {
+            meaningUpright: "Fairness, truth, law, cause and effect.",
+            meaningReversed: "Dishonesty, imbalance, unfair treatment.",
+            description: "Justice signifies the importance of accountability and fairness."
+        },
+        "The Hanged Man": {
+            meaningUpright: "Sacrifice, release, martyrdom, new perspectives.",
+            meaningReversed: "Stalling, indecision, resistance to change.",
+            description: "The Hanged Man represents letting go and seeing things differently."
+        },
+        "Death": {
+            meaningUpright: "Endings, transformation, transition, change.",
+            meaningReversed: "Resistance to change, personal transformation, stagnation.",
+            description: "Death signifies the end of a cycle and the beginning of something new."
+        },
+        "Temperance": {
+            meaningUpright: "Balance, moderation, patience, purpose.",
+            meaningReversed: "Imbalance, excess, lack of long-term vision.",
+            description: "Temperance represents harmony and balance in life."
+        },
+        "The Devil": {
+            meaningUpright: "Addiction, materialism, playfulness, sexuality.",
+            meaningReversed: "Freedom, release, restoring control.",
+            description: "The Devil signifies the darker aspects of life and the need for liberation."
+        },
+        "The Tower": {
+            meaningUpright: "Sudden change, upheaval, chaos, revelation.",
+            meaningReversed: "Avoidance of disaster, fear of change, delayed disaster.",
+            description: "The Tower represents the breaking down of old structures."
+        },
+        "The Star": {
+            meaningUpright: "Hope, faith, purpose, renewal.",
+            meaningReversed: "Lack of faith, despair, discouragement.",
+            description: "The Star signifies inspiration and serenity."
+        },
+        "The Moon": {
+            meaningUpright: "Illusion, fear, anxiety, subconscious.",
+            meaningReversed: "Release of fear, repressed emotion, inner confusion.",
+            description: "The Moon represents the mysteries of the subconscious."
+        },
+        "The Sun": {
+            meaningUpright: "Joy, success, positivity, vitality.",
+            meaningReversed: "Negativity, depression, sadness.",
+            description: "The Sun signifies happiness and enlightenment."
+        },
+        "Judgement": {
+            meaningUpright: "Judgement, rebirth, inner calling, absolution.",
+            meaningReversed: "Self-doubt, refusal of self-examination, lack of accountability.",
+            description: "Judgement represents reflection and reckoning."
+        },
+        "The World": {
+            meaningUpright: "Completion, integration, accomplishment, travel.",
+            meaningReversed: "Incompletion, lack of closure, delays.",
+            description: "The World signifies the end of a journey and fulfillment."
+        },
+        // Minor Arcana - Wands
+        "Ace of Wands": {
+            meaningUpright: "Inspiration, new opportunities, growth.",
+            meaningReversed: "Lack of direction, delays, distractions.",
+            description: "The Ace of Wands represents the spark of creativity."
+        },
+        "Two of Wands": {
+            meaningUpright: "Planning, making decisions, discovery.",
+            meaningReversed: "Fear of unknown, lack of planning, indecision.",
+            description: "The Two of Wands signifies future planning and progress."
+        },
+        "Three of Wands": {
+            meaningUpright: "Expansion, foresight, overseas opportunities.",
+            meaningReversed: "Lack of foresight, delays, obstacles.",
+            description: "The Three of Wands represents growth and exploration."
+        },
+        "Four of Wands": {
+            meaningUpright: "Celebration, harmony, marriage, home.",
+            meaningReversed: "Dissatisfaction, conflict, instability.",
+            description: "The Four of Wands signifies joy and community."
+        },
+        "Five of Wands": {
+            meaningUpright: "Conflict, competition, rivalry.",
+            meaningReversed: "Avoidance of conflict, harmony, peace.",
+            description: "The Five of Wands represents challenges and competition."
+        },
+        "Six of Wands": {
+            meaningUpright: "Victory, success, public recognition.",
+            meaningReversed: "Lack of confidence, fall from grace, ego.",
+            description: "The Six of Wands signifies triumph and recognition."
+        },
+        "Seven of Wands": {
+            meaningUpright: "Challenge, competition, protection.",
+            meaningReversed: "Giving up, overwhelmed, defensiveness.",
+            description: "The Seven of Wands represents standing your ground."
+        },
+        "Eight of Wands": {
+            meaningUpright: "Speed, action, quick decisions.",
+            meaningReversed: "Delays, frustration, holding off.",
+            description: "The Eight of Wands signifies swift movement and progress."
+        },
+        "Nine of Wands": {
+            meaningUpright: "Courage, persistence, resilience.",
+            meaningReversed: "Defensiveness, paranoia, fatigue.",
+            description: "The Nine of Wands represents resilience and determination."
+        },
+        "Ten of Wands": {
+            meaningUpright: "Burden, responsibility, hard work.",
+            meaningReversed: "Burnout, stress, taking on too much.",
+            description: "The Ten of Wands signifies the weight of responsibilities."
+        },
+        "Page of Wands": {
+            meaningUpright: "Inspiration, ideas, discovery.",
+            meaningReversed: "Lack of direction, procrastination, immaturity.",
+            description: "The Page of Wands represents enthusiasm and exploration."
+        },
+        "Knight of Wands": {
+            meaningUpright: "Energy, passion, adventure.",
+            meaningReversed: "Haste, recklessness, delays.",
+            description: "The Knight of Wands signifies action and adventure."
+        },
+        "Queen of Wands": {
+            meaningUpright: "Courage, confidence, independence.",
+            meaningReversed: "Self-doubt, jealousy, insecurity.",
+            description: "The Queen of Wands represents warmth and vibrancy."
+        },
+        "King of Wands": {
+            meaningUpright: "Leadership, vision, entrepreneurship.",
+            meaningReversed: "Impulsiveness, lack of direction, arrogance.",
+            description: "The King of Wands signifies authority and vision."
+        },
+        // Minor Arcana - Cups
+        "Ace of Cups": {
+            meaningUpright: "Love, compassion, creativity.",
+            meaningReversed: "Blocked or repressed emotions, emptiness.",
+            description: "The Ace of Cups represents new emotional beginnings."
+        },
+        "Two of Cups": {
+            meaningUpright: "Partnership, unity, love.",
+            meaningReversed: "Breakup, imbalance, miscommunication.",
+            description: "The Two of Cups signifies mutual attraction and connection."
+        },
+        "Three of Cups": {
+            meaningUpright: "Celebration, friendship, creativity.",
+            meaningReversed: "Isolation, sadness, loneliness.",
+            description: "The Three of Cups represents joy and community."
+        },
+        "Four of Cups": {
+            meaningUpright: "Meditation, contemplation, apathy.",
+            meaningReversed: "Boredom, missed opportunities, discontent.",
+            description: "The Four of Cups signifies introspection and reevaluation."
+        },
+        "Five of Cups": {
+            meaningUpright: "Loss, grief, disappointment.",
+            meaningReversed: "Acceptance, moving on, finding peace.",
+            description: "The Five of Cups represents the need to let go of the past."
+        },
+        "Six of Cups": {
+            meaningUpright: "Childhood memories, innocence, joy.",
+            meaningReversed: "Stuck in the past, unrealistic expectations.",
+            description: "The Six of Cups signifies nostalgia and childhood."
+        },
+        "Seven of Cups": {
+            meaningUpright: "Choices, options, wishful thinking.",
+            meaningReversed: "Lack of choices, confusion, temptation.",
+            description: "The Seven of Cups represents the need to make decisions."
+        },
+        "Eight of Cups": {
+            meaningUpright: "Walking away, abandonment, disillusionment.",
+            meaningReversed: "Fear of change, stagnation, avoidance.",
+            description: "The Eight of Cups signifies the need to move on."
+        },
+        "Nine of Cups": {
+            meaningUpright: "Contentment, satisfaction, gratitude.",
+            meaningReversed: "Dissatisfaction, lack of fulfillment.",
+            description: "The Nine of Cups represents emotional stability and happiness."
+        },
+        "Ten of Cups": {
+            meaningUpright: "Happiness, fulfillment, family.",
+            meaningReversed: "Broken relationships, disconnection.",
+            description: "The Ten of Cups signifies emotional fulfillment and harmony."
+        },
+        "Page of Cups": {
+            meaningUpright: "Creativity, intuition, inspiration.",
+            meaningReversed: "Emotional immaturity, unrealistic expectations.",
+            description: "The Page of Cups represents new emotional experiences."
+        },
+        "Knight of Cups": {
+            meaningUpright: "Romance, charm, idealism.",
+            meaningReversed: "Moody, unrealistic, overactive imagination.",
+            description: "The Knight of Cups signifies following your heart."
+        },
+        "Queen of Cups": {
+            meaningUpright: "Compassion, calm, comfort.",
+            meaningReversed: "Emotional insecurity, dependence.",
+            description: "The Queen of Cups represents emotional depth and intuition."
+        },
+        "King of Cups": {
+            meaningUpright: "Emotional balance, control, generosity.",
+            meaningReversed: "Emotional manipulation, moodiness.",
+            description: "The King of Cups signifies emotional maturity and wisdom."
+        },
+        // Minor Arcana - Swords
+        "Ace of Swords": {
+            meaningUpright: "Clarity, truth, new ideas.",
+            meaningReversed: "Confusion, chaos, lack of clarity.",
+            description: "The Ace of Swords represents new beginnings in thought."
+        },
+        "Two of Swords": {
+            meaningUpright: "Indecision, choices, stalemate.",
+            meaningReversed: "Confusion, information overload, indecision.",
+            description: "The Two of Swords signifies the need to make a choice."
+        },
+        "Three of Swords": {
+            meaningUpright: "Heartbreak, emotional pain, sorrow.",
+            meaningReversed: "Healing, recovery, forgiveness.",
+            description: "The Three of Swords represents emotional turmoil."
+        },
+        "Four of Swords": {
+            meaningUpright: "Rest, recovery, contemplation.",
+            meaningReversed: "Burnout, stress, exhaustion.",
+            description: "The Four of Swords signifies the need for rest."
+        },
+        "Five of Swords": {
+            meaningUpright: "Conflict, tension, defeat.",
+            meaningReversed: "Resolution, compromise, moving on.",
+            description: "The Five of Swords represents the aftermath of conflict."
+        },
+        "Six of Swords": {
+            meaningUpright: "Transition, change, moving on.",
+            meaningReversed: "Inability to move on, stagnation.",
+            description: "The Six of Swords signifies a journey towards healing."
+        },
+        "Seven of Swords": {
+            meaningUpright: "Betrayal, deception, strategy.",
+            meaningReversed: "Confession, revelation, coming clean.",
+            description: "The Seven of Swords represents the need for honesty."
+        },
+        "Eight of Swords": {
+            meaningUpright: "Restriction, isolation, self-imposed limitations.",
+            meaningReversed: "Freedom, release, empowerment.",
+            description: "The Eight of Swords signifies breaking free from constraints."
+        },
+        "Nine of Swords": {
+            meaningUpright: "Anxiety, worry, fear.",
+            meaningReversed: "Hope, finding peace, overcoming fear.",
+            description: "The Nine of Swords represents the weight of worry."
+        },
+        "Ten of Swords": {
+            meaningUpright: "Betrayal, loss, endings.",
+            meaningReversed: "Recovery, regeneration, fear of change.",
+            description: "The Ten of Swords signifies the end of a difficult situation."
+        },
+        "Page of Swords": {
+            meaningUpright: "Curiosity, intelligence, new ideas.",
+            meaningReversed: "Deception, manipulation, gossip.",
+            description: "The Page of Swords represents the pursuit of knowledge."
+        },
+        "Knight of Swords": {
+            meaningUpright: "Action, impulsiveness, ambition.",
+            meaningReversed: "Haste, recklessness, lack of direction.",
+            description: "The Knight of Swords signifies swift action."
+        },
+        "Queen of Swords": {
+            meaningUpright: "Independence, perception, clear-mindedness.",
+            meaningReversed: "Overly critical, cold-hearted, bitterness.",
+            description: "The Queen of Swords represents clarity and intellect."
+        },
+        "King of Swords": {
+            meaningUpright: "Authority, truth, intellectual power.",
+            meaningReversed: "Manipulation, tyranny, abuse of power.",
+            description: "The King of Swords signifies the importance of logic and reason."
+        },
+        // Minor Arcana - Pentacles
+        "Ace of Pentacles": {
+            meaningUpright: "New financial opportunities, prosperity.",
+            meaningReversed: "Lost opportunity, lack of planning.",
+            description: "The Ace of Pentacles represents new beginnings in the material world."
+        },
+        "Two of Pentacles": {
+            meaningUpright: "Balance, adaptability, time management.",
+            meaningReversed: "Overcommitment, disorganization, juggling too much.",
+            description: "The Two of Pentacles signifies the need for balance."
+        },
+        "Three of Pentacles": {
+            meaningUpright: "Teamwork, collaboration, skill.",
+            meaningReversed: "Lack of teamwork, disorganization, poor planning.",
+            description: "The Three of Pentacles represents the importance of collaboration."
+        },
+        "Four of Pentacles": {
+            meaningUpright: "Control, security, stability.",
+            meaningReversed: "Greed, materialism, insecurity.",
+            description: "The Four of Pentacles signifies the need to let go."
+        },
+        "Five of Pentacles": {
+            meaningUpright: "Financial loss, poverty, isolation.",
+            meaningReversed: "Recovery, improvement, help from others.",
+            description: "The Five of Pentacles represents hardship and struggle."
+        },
+        "Six of Pentacles": {
+            meaningUpright: "Generosity, charity, sharing.",
+            meaningReversed: "Selfishness, debt, one-sidedness.",
+            description: "The Six of Pentacles signifies the importance of giving and receiving."
+        },
+        "Seven of Pentacles": {
+            meaningUpright: "Patience, perseverance, long-term view.",
+            meaningReversed: "Lack of long-term vision, impatience.",
+            description: "The Seven of Pentacles represents the need for reflection."
+        },
+        "Eight of Pentacles": {
+            meaningUpright: "Skill development, hard work, craftsmanship.",
+            meaningReversed: "Lack of ambition, no focus, poor quality.",
+            description: "The Eight of Pentacles signifies dedication to improvement."
+        },
+        "Nine of Pentacles": {
+            meaningUpright: "Abundance, luxury, self-sufficiency.",
+            meaningReversed: "Financial setbacks, lack of independence.",
+            description: "The Nine of Pentacles represents enjoying the fruits of your labor."
+        },
+        "Ten of Pentacles": {
+            meaningUpright: "Wealth, inheritance, family ties.",
+            meaningReversed: "Financial failure, lack of stability.",
+            description: "The Ten of Pentacles signifies long-term success and stability."
+        },
+        "Page of Pentacles": {
+            meaningUpright: "Manifestation, financial opportunity, new job.",
+            meaningReversed: "Lack of progress, procrastination.",
+            description: "The Page of Pentacles represents the pursuit of goals."
+        },
+        "Knight of Pentacles": {
+            meaningUpright: "Hard work, responsibility, routine.",
+            meaningReversed: "Laziness, obsession with work, lack of progress.",
+            description: "The Knight of Pentacles signifies dedication and reliability."
+        },
+        "Queen of Pentacles": {
+            meaningUpright: "Nurturing, practicality, financial security.",
+            meaningReversed: "Self-care, work-life imbalance.",
+            description: "The Queen of Pentacles represents comfort and security."
+        },
+        "King of Pentacles": {
+            meaningUpright: "Wealth, business, leadership.",
+            meaningReversed: "Financial loss, corruption, instability.",
+            description: "The King of Pentacles signifies success and stability in business."
+        }
+    };
+
+    async function showCardMeaning(card) {
+        interpretation.innerHTML = '<p class="loading">Divining card meaning...</p>';
+        try {
+            // Get the meaning from the mapping
+            const meaning = cardMeanings[card];
+
+            interpretation.innerHTML = `
+                <h3>${card}</h3>
+                <p><strong>Meaning Upright:</strong> ${meaning.meaningUpright}</p>
+                <p><strong>Meaning Reversed:</strong> ${meaning.meaningReversed}</p>
+                <p><strong>Description:</strong> ${meaning.description}</p>
+            `;
+        } catch (error) {
+            console.error('Error fetching card meaning:', error);
+            interpretation.innerHTML = "<p>An error occurred while fetching the card meaning. Please try again.</p>";
+        }
+    }
+
+    async function interpretFullSpread() {
+      if (drawnCards.length === 0) {
+        interpretation.innerHTML = "<p>Please draw cards before interpreting the spread.</p>";
+        return;
+      }
+
+      interpretation.innerHTML = '<p class="loading">Interpreting the mystical spread...</p>';
+      const spreadName = spreadType.value === '1' ? 'One Card' : spreadType.value === '3' ? 'Three Card' : 'Celtic Cross';
+      
+      try {
+        const response = await fetch('/api/tarot/interpret', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ spread: spreadName, cards: drawnCards })
+        });
+
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+
+        const data = await response.json();
+        let interpretationHTML = `<h3>${spreadName} Spread Interpretation</h3>`;
+        
+        // Display the cards drawn
+        interpretationHTML += "<h4>Cards Drawn:</h4><ul>";
+        drawnCards.forEach((card, index) => {
+          interpretationHTML += `<li>${index + 1}. ${card}</li>`;
+        });
+        interpretationHTML += "</ul>";
+
+        // Display the interpretation
+        interpretationHTML += `<h4>Interpretation:</h4><p>${data.interpretation}</p>`;
+
+        interpretation.innerHTML = interpretationHTML;
+      } catch (error) {
+        console.error('Error:', error);
+        
+        // Array of magical error messages
+        const errorMessages = [
+          "The stars have aligned in a peculiar way, obscuring the wisdom of the cards. Perhaps the cosmos wishes for you to seek deeper truths.",
+          "A cosmic veil has descended, shrouding the insights of the universe. Trust that clarity will emerge in time.",
+          "The celestial energies are in flux, creating a ripple in the fabric of fate. Seek the whispers of the universe for guidance.",
+          "A mystical disturbance has clouded the reading. The universe beckons you to explore the hidden paths of your journey.",
+          "The cosmic dance of the planets has momentarily obscured the light of understanding. Embrace the mystery and await the revelation."
+        ];
+
+        // Select a random message
+        const randomMessage = errorMessages[Math.floor(Math.random() * errorMessages.length)];
+        interpretation.innerHTML = `<p>${randomMessage}</p>`;
+      }
+    }
+
+    function clearReading() {
+      cardDisplay.innerHTML = '';
+      interpretation.innerHTML = '';
+      drawnCards = [];
+      updateDeckStatus();
+    }
+
+    function saveReading() {
+      const reading = {
+        drawnCards: drawnCards,
+        remainingDeck: currentDeck,
+        spreadType: spreadType.value
+      };
+      localStorage.setItem('tarotReading', JSON.stringify(reading));
+      interpretation.innerHTML += "<p>Your reading has been saved in the mystical archives.</p>";
+    }
+
+    function loadReading() {
+      const savedReading = JSON.parse(localStorage.getItem('tarotReading'));
+      if (savedReading) {
+        clearReading();
+        currentDeck = savedReading.remainingDeck;
+        drawnCards = savedReading.drawnCards;
+        spreadType.value = savedReading.spreadType;
+        drawnCards.forEach((card, index) => displayCard(card, index));
+        updateDeckStatus();
+        interpretation.innerHTML = "<p>Your previous reading has been summoned from the ether. Click 'Interpret Spread' for a full interpretation.</p>";
+      } else {
+        interpretation.innerHTML = "<p>No saved reading found in the mystical archives.</p>";
+      }
+    }
+
+    function updateDeckStatus() {
+      deckStatus.textContent = `CARDS: ${currentDeck.length}`;
+    }
+
+    // Initialize
+    shuffleDeck();
+  </script>
+</body>
+</html>
