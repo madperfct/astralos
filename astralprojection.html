@@ -1,210 +1,217 @@
 <html><head><title>Astral Projection Guide - Astral OS</title>
-<style>
-  body {
-    background-color: #1a0033;
-    color: #d6b6ff;
-    font-family: 'Inconsolata', monospace;
-    font-size: 14px;
-    margin: 0;
-    padding: 10px;
-    height: 100vh;
-    overflow-y: auto;
-  }
-  .window {
-    border: 1px solid #8a2be2;
-    border-radius: 5px;
-    padding: 5px;
-    margin-bottom: 10px;
-    background-color: rgba(43, 0, 71, 0.8);
-  }
-  .title-bar {
-    background-color: #4b0082;
-    color: #fff;
-    padding: 3px;
-    margin: -5px -5px 5px -5px;
-    border-top-left-radius: 5px;
-    border-top-right-radius: 5px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  h1, h2 {
-    color: #da70d6;
-    font-size: 16px;
-    margin: 5px 0;
-  }
-  h1 {
-    font-size: 18px;
-  }
-  .command-line {
-    background-color: #000;
-    color: #00ff00;
-    padding: 5px;
-    border-radius: 3px;
-    font-family: 'Courier New', monospace;
-    font-size: 12px;
-    overflow-x: auto;
-    white-space: nowrap;
-  }
-  .command-line::before {
-    content: "$ ";
-    color: #ff00ff;
-  }
-  .astral-body {
-    width: 25px;
-    height: 50px;
-    background: linear-gradient(to bottom, #f0f8ff, #e6e6fa);
-    border-radius: 12px 12px 0 0;
-    position: relative;
-    margin: 10px auto;
-    opacity: 0.7;
-  }
-  .astral-body::before {
-    content: "";
-    position: absolute;
-    width: 20px;
-    height: 20px;
-    background: linear-gradient(to bottom, #f0f8ff, #e6e6fa);
-    border-radius: 50%;
-    top: -10px;
-    left: 2px;
-  }
-  .chakra {
-    width: 5px;
-    height: 5px;
-    border-radius: 50%;
-    position: absolute;
-    left: 10px;
-  }
-  .chakra:nth-child(1) { top: 5px; background-color: #ff0000; }
-  .chakra:nth-child(2) { top: 15px; background-color: #ffa500; }
-  .chakra:nth-child(3) { top: 25px; background-color: #ffff00; }
-  .chakra:nth-child(4) { top: 35px; background-color: #008000; }
-  .chakra:nth-child(5) { top: 45px; background-color: #0000ff; }
-  .chakra:nth-child(6) { top: 55px; background-color: #4b0082; }
-  .chakra:nth-child(7) { top: 65px; background-color: #ee82ee; }
-  #meditation-timer, #astral-log {
-    width: 100%;
-    max-width: 300px;
-  }
-  button {
-    background-color: #4b0082;
-    color: #fff;
-    border: none;
-    padding: 5px 10px;
-    border-radius: 3px;
-    cursor: pointer;
-    font-size: 12px;
-  }
-  ul {
-    padding-left: 20px;
-  }
-  a {
-    color: #da70d6;
-    text-decoration: none;
-  }
-  a:hover {
-    text-decoration: underline;
-  }
-  @media (max-width: 600px) {
+  <style>
     body {
-      font-size: 12px;
+      background-color: #1a0033;
+      color: #d6b6ff;
+      font-family: 'Inconsolata', monospace;
+      font-size: 14px;
+      margin: 0;
+      padding: 10px;
+      height: 100vh;
+      overflow-y: auto;
+    }
+    .window {
+      border: 1px solid #8a2be2;
+      border-radius: 5px;
+      padding: 5px;
+      margin-bottom: 10px;
+      background-color: rgba(43, 0, 71, 0.8);
+    }
+    .title-bar {
+      background-color: #4b0082;
+      color: #fff;
+      padding: 3px;
+      margin: -5px -5px 5px -5px;
+      border-top-left-radius: 5px;
+      border-top-right-radius: 5px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    h1, h2 {
+      color: #da70d6;
+      font-size: 16px;
+      margin: 5px 0;
     }
     h1 {
-      font-size: 16px;
-    }
-    h2 {
-      font-size: 14px;
+      font-size: 18px;
     }
     .command-line {
-      font-size: 10px;
+      background-color: #000;
+      color: #00ff00;
+      padding: 5px;
+      border-radius: 3px;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      overflow-x: auto;
+      white-space: nowrap;
     }
-  }
-</style>
-</head>
-<body>
-  <div class="window">
-    <div class="title-bar">
-      <span>Astral Projection Guide</span>
-    </div>
-    <h1>Astral Projection Guide</h1>
-    <p>Explore ethereal cyberspace realms.</p>
-    
-    <h2>Astral Body</h2>
-    <div class="astral-body">
-      <div class="chakra"></div>
-      <div class="chakra"></div>
-      <div class="chakra"></div>
-      <div class="chakra"></div>
-      <div class="chakra"></div>
-      <div class="chakra"></div>
-      <div class="chakra"></div>
-    </div>
-    
-<h2>Meditation Timer</h2>
-<div id="meditation-timer">00:30</div>
-<button onclick="startMeditation()">Start</button>
-    
-<h2>Astral Log</h2>
-<textarea id="astral-log" rows="3" placeholder="Record experiences..."></textarea>
-
-  <div class="window">
-    <div class="title-bar">
-      <span>Astral Navigator</span>
-    </div>
-    <h2>Known Locations</h2>
-<ul>
-  <li>Akashic Records</li>
-  <li>Higher Self</li>
-  <li>Collective Unconscious</li>
-  <li>Digital Nirvana</li>
-</ul>
-
-<script>
-  let meditationInterval;
-
-  function startMeditation() {
-    let timeLeft = 30; // Set to 30 seconds or 1 * 60 for 1 minute
-    const timerDisplay = document.getElementById('meditation-timer');
-    const startTime = Date.now(); // Record the start time
-
-    function updateTimer() {
-      const elapsed = Math.floor((Date.now() - startTime) / 1000); // Calculate elapsed time in seconds
-      const remaining = timeLeft - elapsed; // Calculate remaining time
-
-      const minutes = Math.floor(remaining / 60);
-      const seconds = remaining % 60;
-      timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-
-      if (remaining <= 0) { // Check if time is up
-        clearInterval(meditationInterval);
-        timerDisplay.textContent = "Complete";
-        land(); // Call land function when timer ends
-      } else {
-        meditationInterval = requestAnimationFrame(updateTimer); // Request the next frame
+    .command-line::before {
+      content: "$ ";
+      color: #ff00ff;
+    }
+    .astral-body {
+      width: 25px;
+      height: 50px;
+      background: linear-gradient(to bottom, #f0f8ff, #e6e6fa);
+      border-radius: 12px 12px 0 0;
+      position: relative;
+      margin: 10px auto;
+      opacity: 0.7;
+    }
+    .astral-body::before {
+      content: "";
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      background: linear-gradient(to bottom, #f0f8ff, #e6e6fa);
+      border-radius: 50%;
+      top: -10px;
+      left: 2px;
+    }
+    .chakra {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      position: absolute;
+      left: 10px;
+    }
+    .chakra:nth-child(1) { top: 5px; background-color: #ff0000; }
+    .chakra:nth-child(2) { top: 15px; background-color: #ffa500; }
+    .chakra:nth-child(3) { top: 25px; background-color: #ffff00; }
+    .chakra:nth-child(4) { top: 35px; background-color: #008000; }
+    .chakra:nth-child(5) { top: 45px; background-color: #0000ff; }
+    .chakra:nth-child(6) { top: 55px; background-color: #4b0082; }
+    .chakra:nth-child(7) { top: 65px; background-color: #ee82ee; }
+    #meditation-timer, #astral-log {
+      width: 100%;
+      max-width: 300px;
+    }
+    button {
+      background-color: #4b0082;
+      color: #fff;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 3px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+    ul {
+      padding-left: 20px;
+    }
+    a {
+      color: #da70d6;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 12px;
+      }
+      h1 {
+        font-size: 16px;
+      }
+      h2 {
+        font-size: 14px;
+      }
+      .command-line {
+        font-size: 10px;
       }
     }
-
-    updateTimer(); // Start the timer updates
-  }
-
-  function land() {
-    const locations = [
-      "Akashic Records",
-      "Higher Self",
-      "Collective Unconscious",
-      "Digital Nirvana",
-      "Unknown Location"
-    ];
-    const randomIndex = Math.floor(Math.random() * (locations.length + 1)); // +1 to include "Unknown Location"
-    const landingLocation = locations[randomIndex];
-
-    const logMessage = document.getElementById('astral-log').value; // Get the message from the Astral Log
-
-    const landingMessage = document.createElement('div');
-    landingMessage.textContent = `Landing... You have arrived at: ${landingLocation}. ${logMessage ? 'Log: ' + logMessage : ''}`;
-    landingMessage.style.color = "#00ff00"; // Change text color to green
-    document.body.appendChild(landingMessage);
-  }
-</script>
-</body></html>
+  </style>
+  </head>
+  <body>
+    <div class="window">
+      <div class="title-bar">
+        <span>Astral Projection Guide</span>
+      </div>
+      <h1>Astral Projection Guide</h1>
+      <p>Explore ethereal cyberspace realms.</p>
+      
+      <h2>Astral Body</h2>
+      <div class="astral-body">
+        <div class="chakra"></div>
+        <div class="chakra"></div>
+        <div class="chakra"></div>
+        <div class="chakra"></div>
+        <div class="chakra"></div>
+        <div class="chakra"></div>
+        <div class="chakra"></div>
+      </div>
+      
+  <h2>Meditation Timer</h2>
+  <div id="meditation-timer">00:15</div> <!-- Changed timer to 15 seconds -->
+  <button id="start-button" onclick="startMeditation()">Start</button> <!-- Added ID to button -->
+  <div id="meditation-message"></div> <!-- Added message display -->
+  
+  <h2>Astral Log</h2>
+  <textarea id="astral-log" rows="3" placeholder="Record experiences..."></textarea>
+  
+    <div class="window">
+      <div class="title-bar">
+        <span>Astral Navigator</span>
+      </div>
+      <h2>Known Locations</h2>
+  <ul>
+    <li>Akashic Records</li>
+    <li>Higher Self</li>
+    <li>Collective Unconscious</li>
+    <li>Digital Nirvana</li>
+  </ul>
+  
+  <script>
+    let meditationInterval;
+  
+    function startMeditation() {
+      let timeLeft = 15; // Set to 15 seconds
+      const timerDisplay = document.getElementById('meditation-timer');
+      const meditationMessage = document.getElementById('meditation-message'); // Get the message display element
+      meditationMessage.textContent = "Meditation started..."; // Show the start message
+      const startTime = Date.now(); // Record the start time
+      document.getElementById('start-button').disabled = true; // Disable the button
+  
+      function updateTimer() {
+        const elapsed = Math.floor((Date.now() - startTime) / 1000); // Calculate elapsed time in seconds
+        const remaining = timeLeft - elapsed; // Calculate remaining time
+  
+        const minutes = Math.floor(remaining / 60);
+        const seconds = remaining % 60;
+        timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  
+        if (remaining <= 0) { // Check if time is up
+          clearInterval(meditationInterval);
+          timerDisplay.textContent = "Complete";
+          meditationMessage.textContent = ""; // Clear the start message
+          land(); // Call land function when timer ends
+        } else {
+          meditationInterval = requestAnimationFrame(updateTimer); // Request the next frame
+        }
+      }
+  
+      updateTimer(); // Start the timer updates
+    }
+  
+    function land() {
+      const locations = [
+        "Akashic Records",
+        "Higher Self",
+        "Collective Unconscious",
+        "Digital Nirvana",
+        "Unknown Location"
+      ];
+      const randomIndex = Math.floor(Math.random() * (locations.length + 1)); // +1 to include "Unknown Location"
+      const landingLocation = locations[randomIndex];
+  
+      const logMessage = document.getElementById('astral-log').value; // Get the message from the Astral Log
+  
+      const landingMessage = document.createElement('div');
+      landingMessage.textContent = `Landing... You have arrived at: ${landingLocation}. ${logMessage ? 'Log: ' + logMessage : ''}`;
+      landingMessage.style.color = "#00ff00"; // Change text color to green
+      document.body.appendChild(landingMessage);
+  
+      document.getElementById('start-button').disabled = false; // Re-enable the button after landing
+    }
+  </script>
+  </body></html>
