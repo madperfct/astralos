@@ -246,19 +246,19 @@ async function executeCommand(command) {
     return;
   }
   
-  if (normalizedCommand === 'astral projection') {
+  if (normalizedCommand === 'projection') {
     addToTerminal(`<span class="success">Astral Projection allows you to transcend the physical realm and explore the astral plane. Experience the freedom of your spirit as you journey through dimensions beyond the material world!</span>`);
     return;
   }
   
-  if (normalizedCommand === 'alchemical lab') {
+  if (normalizedCommand === 'lab') {
     addToTerminal(`<span class="success">The Alchemical Lab is where science meets magic. Experiment with elements, create potions, and unlock the secrets of transformation. Discover the alchemical processes that can change reality!</span>`);
     return;
   }
   
   // Command to display available commands
   if (normalizedCommand === 'help') {
-    addToTerminal(`<span class="success">Available commands: tarot, sigilize, terminal, astral projection, alchemical lab, secret, history, ca</span>`);
+    addToTerminal(`<span class="success">Available commands: tarot, sigilize, terminal, projection, lab, ., history, ca</span>`);
     return;
   }
 
@@ -269,7 +269,7 @@ async function executeCommand(command) {
   }
   
   // Funny command
-  if (normalizedCommand === 'secret') {
+  if (normalizedCommand === '.') {
     addToTerminal(`<span class="success">The true power of the universe lies in your intentions. Every thought you manifest shapes reality. Remember, the sigils you create are not just symbols; they are gateways to your desires. Harness this energy wisely! ✨🔮</span>`);
     addFunnyDrawing();
     return;
