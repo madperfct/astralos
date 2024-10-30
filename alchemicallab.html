@@ -181,7 +181,18 @@
         <li>Transmute Elements</li>
         <li>Reveal Secrets</li>
         <li>Conjure Familiar</li>
-        <li>Astral Veil</li>
+        <li>Enhance Potion</li>
+        <li>Create Philosopher's Stone</li> <!-- New spell -->
+        <li>Brew Elixir of Immortality</li> <!-- New spell -->
+        <li>Forge Elemental Shield</li> <!-- New spell -->
+        <li>Unlock Digital Secrets</li> <!-- New spell -->
+        <li>Summon Guardian Spirit</li> <!-- New spell -->
+        <li>Invoke the Ancients</li> <!-- New spell -->
+        <li>Craft the Ultimate Potion</li> <!-- New spell -->
+        <li>Conjure the Digital Familiar</li> <!-- New spell -->
+        <li>Manifest the Eternal Flame</li> <!-- New spell -->
+        <li>Awaken the Ancient Ones</li> <!-- New spell -->
+        <li>Create the Celestial Shield</li> <!-- New spell -->
       </ul>
     </div>
   
@@ -205,22 +216,22 @@
   
       // Function to perform the experiment
       function performExperiment() {
-      const selectedIngredients = Array.from(document.querySelectorAll('input[type="checkbox"]:checked')).map(checkbox => checkbox.value);
-      const resultDiv = document.getElementById('experiment-result');
+        const selectedIngredients = Array.from(document.querySelectorAll('input[type="checkbox"]:checked')).map(checkbox => checkbox.value);
+        const resultDiv = document.getElementById('experiment-result');
 
-      if (selectedIngredients.length === 0) {
-        resultDiv.textContent = "Please select at least one ingredient.";
-        return;
+        if (selectedIngredients.length < 2) { // Updated to require at least 2 ingredients
+          resultDiv.textContent = "Please select at least 2 ingredients."; // Updated warning message
+          return;
+        }
+
+        resultDiv.textContent = "Casting spell... Please wait.";
+        
+        setTimeout(() => {
+          const spell = castSpell(selectedIngredients);
+          resultDiv.textContent = `Success! You have cast: ${spell}!`;
+          performSpellAction(spell); // Call the function to perform the spell action
+        }, 3000); // Simulate a 3-second process
       }
-
-      resultDiv.textContent = "Casting spell... Please wait.";
-      
-      setTimeout(() => {
-        const spell = castSpell(selectedIngredients);
-        resultDiv.textContent = `Success! You have cast: ${spell}!`;
-        performSpellAction(spell); // Call the function to perform the spell action
-      }, 3000); // Simulate a 3-second process
-    }
   
       // Function to determine the spell based on selected ingredients
       function castSpell(ingredients) {
@@ -233,9 +244,20 @@
           "Binary Sulfur, Kernel Salt": "Transmute Elements",
           "Root Access Extract, Elixir of Life": "Reveal Secrets",
           "Quantum Mercury, Dragon's Blood": "Conjure Familiar",
-          "Philosopher's Stone, Kernel Salt": "Astral Veil"
+          "Philosopher's Stone, Kernel Salt": "Enhance Potion",
+          "Binary Sulfur, Kernel Salt, Quantum Mercury": "Create Philosopher's Stone", // New combinations
+          "Root Access Extract, Dragon's Blood, Elixir of Life": "Brew Elixir of Immortality",
+          "Quantum Mercury, Kernel Salt, Binary Sulfur": "Forge Elemental Shield",
+          "Philosopher's Stone, Quantum Mercury, Root Access Extract": "Unlock Digital Secrets",
+          "Dragon's Blood, Kernel Salt, Elixir of Life": "Summon Guardian Spirit",
+          "Binary Sulfur, Dragon's Blood, Quantum Mercury": "Invoke the Ancients",
+          "Kernel Salt, Philosopher's Stone, Elixir of Life": "Craft the Ultimate Potion",
+          "Root Access Extract, Binary Sulfur, Quantum Mercury": "Conjure the Digital Familiar",
+          "Philosopher's Stone, Dragon's Blood, Quantum Mercury": "Manifest the Eternal Flame",
+          "Elixir of Life, Kernel Salt, Root Access Extract": "Awaken the Ancient Ones",
+          "Dragon's Blood, Quantum Mercury, Kernel Salt": "Create the Celestial Shield"
         };
-  
+
         // Create a key from selected ingredients
         const key = ingredients.sort().join(", ");
         return spellCombinations[key] || "Unknown Spell"; // Return the spell or unknown
@@ -251,9 +273,20 @@
           "Transmute Elements": "Elements around you shift and change form.",
           "Reveal Secrets": "Hidden truths are now visible to you.",
           "Conjure Familiar": "A loyal familiar has joined your side.",
-          "Enhance Potion": "Your potion glows with enhanced power!"
+          "Enhance Potion": "Your potion glows with enhanced power!",
+          "Create Philosopher's Stone": "You have created the legendary Philosopher's Stone!",
+          "Brew Elixir of Immortality": "You have brewed the Elixir of Immortality!",
+          "Forge Elemental Shield": "An elemental shield surrounds you!",
+          "Unlock Digital Secrets": "You have unlocked the secrets of the digital realm!",
+          "Summon Guardian Spirit": "A guardian spirit appears to protect you!",
+          "Invoke the Ancients": "The ancient ones have been invoked!",
+          "Craft the Ultimate Potion": "You have crafted the ultimate potion!",
+          "Conjure the Digital Familiar": "A digital familiar has been conjured!",
+          "Manifest the Eternal Flame": "The eternal flame has been manifested!",
+          "Awaken the Ancient Ones": "The ancient ones have awakened!",
+          "Create the Celestial Shield": "A celestial shield has been created!"
         };
-  
+
         alert(actionMessages[spell] || "The spell fizzles out with no effect."); // Display the action message
       }
     </script>
