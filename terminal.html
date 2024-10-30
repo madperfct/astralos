@@ -246,29 +246,30 @@ async function executeCommand(command) {
     return;
   }
   
-  if (normalizedCommand === 'projection') {
+  if (normalizedCommand === 'astral projection') {
     addToTerminal(`<span class="success">Astral Projection allows you to transcend the physical realm and explore the astral plane. Experience the freedom of your spirit as you journey through dimensions beyond the material world!</span>`);
     return;
   }
   
-  if (normalizedCommand === 'lab') {
+  if (normalizedCommand === 'alchemical lab') {
     addToTerminal(`<span class="success">The Alchemical Lab is where science meets magic. Experiment with elements, create potions, and unlock the secrets of transformation. Discover the alchemical processes that can change reality!</span>`);
     return;
   }
   
   // Command to display available commands
   if (normalizedCommand === 'help') {
-    addToTerminal(`<span class="success">Available commands: tarot, sigilize, terminal, projection, lab, history, ca, .</span>`);
+    addToTerminal(`<span class="success">Available commands: tarot, sigilize, terminal, astral projection, alchemical lab, secret, history, ca</span>`);
     return;
   }
 
   if (normalizedCommand === 'ca') {
-    addToTerminal(`<span class="success">CA: </span>`);
+    addToTerminal(`<span class="success">In the ancient realms of cosmic wisdom, the Celestial Accord was established, a mystical connection between the stars and the seekers of truth. Legends tell of the Astral OS Token, which embodies the essence of the universe's energy. Each transaction resonates with the vibrations of the cosmos, allowing its holders to tap into the flow of abundance and prosperity. As you engage with this token, remember: your intentions shape its power, and the universe rewards those who dare to dream!
+  Celestial Accord: </span>`);
     return;
   }
   
   // Funny command
-  if (normalizedCommand === '.') {
+  if (normalizedCommand === 'secret') {
     addToTerminal(`<span class="success">The true power of the universe lies in your intentions. Every thought you manifest shapes reality. Remember, the sigils you create are not just symbols; they are gateways to your desires. Harness this energy wisely! ✨🔮</span>`);
     addFunnyDrawing();
     return;
@@ -282,7 +283,7 @@ async function executeCommand(command) {
 
   // Lore command
   if (normalizedCommand === 'history') {
-    addToTerminal(`<span class="success">In the realm of the Astral universe, chaos and order dance in a delicate balance. The ancient practitioners of Astral Magic harness the power of sigils, tarot, and alchemy to shape their destinies. Legends speak of the Quantum Tarot Reader, a mystical tool that reveals hidden truths, and the Sigil Forge, where desires are etched into reality. As you navigate this world, remember: your will is the key to unlocking the universe's secrets!</span>`);
+    addToTerminal(`<span class="success">In the realm of the Astral universe, chaos and order dance in a delicate balance. The ancient practitioners of Chaos Magick harness the power of sigils, tarot, and alchemy to shape their destinies. Legends speak of the Quantum Tarot Reader, a mystical tool that reveals hidden truths, and the Sigil Forge, where desires are etched into reality. As you navigate this world, remember: your will is the key to unlocking the universe's secrets!</span>`);
     return;
   }
 
@@ -327,7 +328,7 @@ async function executeCommand(command) {
     addMagicalEffect();
     
   } catch (error) {
-    addToTerminal(`<span class="error">Error in the fabric of reality!</span>`);
+    addToTerminal(`<span class="error">Error in the fabric of reality: ${error.message}</span>`);
   }
 }
 
